@@ -12,6 +12,7 @@ import (
 )
 
 func UserHandlerGetAll(ctx *fiber.Ctx) error {
+
 	var users []entity.User
 	result := database.DB.Find(&users)
 	if result.Error != nil {
