@@ -23,4 +23,6 @@ func RouteInit(r *fiber.App) {
 
 	r.Post("/book", utils.HandleSingleFile, handler.BookHandlerCreate)
 
+	r.Post("/gallery", utils.HandleMultipleFile, handler.PhotoHandlerCreate)
+
 }
