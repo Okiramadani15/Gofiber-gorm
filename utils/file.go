@@ -104,20 +104,37 @@ func HandleMultipleFile(ctx *fiber.Ctx) error {
 	return ctx.Next()
 }
 
-func HandRemoveFile(filename string, pathFile ...string) error {
+func HandleRemoveFile(filename string, pathFile ...string) error {
+	var filePath string
 	if len(pathFile) > 0 {
-		err := os.Remove(pathFile[0] + filename)
-		if err != nil {
-			log.Println("Failed tp remove file")
-			return err
-		}
+		filePath = pathFile[0] + filename
 	} else {
-		err := os.Remove(DefaultpathAssetImage + filename)
-		if err != nil {
-			log.Println("Failed tp remove file")
-			return err
-		}
+		filePath = DefaultpathAssetImage + filename
+	}
+
+	err := os.Remove(filePath)
+	if err != nil {
+		log.Println("Failed to remove file:", filePath)
+		return err
 	}
 
 	return nil
 }
+
+// func HandleRemoveFile(filename string, pathFile ...string) error {
+// 	if len(pathFile) > 0 {
+// 		err := os.Remove(pathFile[0] + filename)
+// 		if err != nil {
+// 			log.Println("Failed tp remove file")
+// 			return err
+// 		}
+// 	} else {
+// 		err := os.Remove(DefaultpathAssetImage + filename)
+// 		if err != nil {
+// 			log.Println("Failed to remove file")
+// 			return err
+// 		}
+// 	}
+
+// 	return nil
+// }
