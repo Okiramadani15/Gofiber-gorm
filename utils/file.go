@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -29,7 +30,9 @@ import (
 // 	ctx.Locals("filename", filename)
 
 // 	return ctx.Next()
-// }
+// }|
+
+const DefaultpathAssetImage = "./public/covers"
 
 func HandleSingleFile(ctx *fiber.Ctx) error {
 	// HANDLE FILE
@@ -99,4 +102,22 @@ func HandleMultipleFile(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Next()
+}
+
+func HandRemoveFile(filename string, pathFile ...string) error {
+	if len(pathFile) > 0 {
+		err := os.Remove(pathFile[0] + filename)
+		if err != nil {
+			log.Println("Failed tp remove file")
+			return err
+		}
+	} else {
+		err := os.Remove(DefaultpathAssetImage + filename)
+		if err != nil {
+			log.Println("Failed tp remove file")
+			return err
+		}
+	}
+
+	return nil
 }
