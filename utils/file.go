@@ -4,41 +4,51 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
 )
+
+const DefaultpathAssetImage = "./public/covers"
 
 // func HandleSingleFile(ctx *fiber.Ctx) error {
 // 	// HANDLE FILE
 // 	file, errFile := ctx.FormFile("cover")
 // 	if errFile != nil {
-// 		log.Println("Error File =", errFile)
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"error": "Failed to get the file",
+// 		})
 // 	}
 
 // 	var filename *string
 // 	if file != nil {
 // 		filename = &file.Filename
+// 		extensionFile := filepath.Ext(*filename)
+// 		newFilename := fmt.Sprintf("gambar-satu%s", extensionFile)
 
-// 		errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/covers/%s", *filename))
+// 		errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/covers/%s", newFilename))
 // 		if errSaveFile != nil {
-// 			log.Println("Fail to store file into public/covers directory.")
+// 			log.Println("Failed to store file into public/covers directory:", errSaveFile)
+// 			// return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			// 	"error": "Failed to save the file",
+// 			// })
 // 		}
 // 	} else {
-// 		log.Println("nothing file to be uploading")
+// 		log.Println("No file to be uploaded")
+// 		// return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 		// 	"error": "No file uploaded",
+// 		// })
 // 	}
 
 // 	ctx.Locals("filename", filename)
 
 // 	return ctx.Next()
-// }|
-
-const DefaultpathAssetImage = "./public/covers"
+// }
 
 func HandleSingleFile(ctx *fiber.Ctx) error {
 	// HANDLE FILE
 	file, errFile := ctx.FormFile("cover")
 	if errFile != nil {
-		log.Println("Error File =", errFile)
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Failed to get the file",
 		})
@@ -46,22 +56,29 @@ func HandleSingleFile(ctx *fiber.Ctx) error {
 
 	var filename string
 	if file != nil {
-		filename = file.Filename
+		// Ambil extension file
+		extensionFile := filepath.Ext(file.Filename)
+		// Buat nama file baru
+		filename = fmt.Sprintf("gambar-satu%s", extensionFile)
 
+		// Simpan file ke direktori yang diinginkan
 		errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/covers/%s", filename))
 		if errSaveFile != nil {
 			log.Println("Failed to store file into public/covers directory:", errSaveFile)
 			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to save the file",
+				"error":   "Failed to save the file",
+				"message": "failed",
 			})
 		}
 	} else {
 		log.Println("No file to be uploaded")
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "No file uploaded",
+			"error":   "No file uploaded",
+			"message": "failed",
 		})
 	}
 
+	// Simpan nama file ke dalam context locals sebagai string
 	ctx.Locals("filename", filename)
 
 	return ctx.Next()
@@ -79,7 +96,12 @@ func HandleMultipleFile(ctx *fiber.Ctx) error {
 
 		var filename string
 		if file != nil {
-			filename = fmt.Sprintf("%d-%s", i, file.Filename)
+			extensionFile := filepath.Ext(file.Filename)
+			filename = fmt.Sprintf("%d-%s%s", i, "gambar", extensionFile)
+			// // Ambil extension file
+			// extensionFile := filepath.Ext(file.Filename)
+			// // Buat nama file baru
+			// filename = fmt.Sprintf("gambar-satu%s", extensionFile)
 
 			errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/covers/%s", filename))
 			if errSaveFile != nil {
@@ -120,21 +142,3 @@ func HandleRemoveFile(filename string, pathFile ...string) error {
 
 	return nil
 }
-
-// func HandleRemoveFile(filename string, pathFile ...string) error {
-// 	if len(pathFile) > 0 {
-// 		err := os.Remove(pathFile[0] + filename)
-// 		if err != nil {
-// 			log.Println("Failed tp remove file")
-// 			return err
-// 		}
-// 	} else {
-// 		err := os.Remove(DefaultpathAssetImage + filename)
-// 		if err != nil {
-// 			log.Println("Failed to remove file")
-// 			return err
-// 		}
-// 	}
-
-// 	return nil
-// }

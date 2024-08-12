@@ -66,44 +66,6 @@ func PhotoHandlerCreate(ctx *fiber.Ctx) error {
 	})
 }
 
-// func PhotoHandlerDelete(ctx *fiber.Ctx) error {
-// 	photoId := ctx.Params("id")
-// 	var photo entity.Photo
-
-// 	// CHECK AVAILABLE PHOTO
-// 	err := database.DB.First(&photo, "id = ?", photoId).Error
-// 	if err != nil {
-// 		return ctx.Status(404).JSON(fiber.Map{
-// 			"message": "Photo not found",
-// 		})
-// 	}
-
-// 	// Pastikan bahwa photo.Image tidak nil atau kosong
-// 	if photo.Image == "" {
-// 		return ctx.Status(500).JSON(fiber.Map{
-// 			"message": "No image associated with this photo record",
-// 		})
-// 	}
-
-// 	// HANDLE REMOVE FILE
-// 	errDeleteFile := utils.HandleRemoveFile(photo.Image)
-// 	if errDeleteFile != nil {
-// 		log.Println("fail to delete some file")
-// 	}
-
-// 	// Delete record from database
-// 	errDelete := database.DB.Debug().Delete(&photo).Error
-// 	if errDelete != nil {
-// 		return ctx.Status(500).JSON(fiber.Map{
-// 			"message": "internal server error",
-// 		})
-// 	}
-
-// 	return ctx.JSON(fiber.Map{
-// 		"message": "photo was deleted",
-// 	})
-// }
-
 func PhotoHandlerDelete(ctx *fiber.Ctx) error {
 	photoId := ctx.Params("id")
 	var photo entity.Photo
